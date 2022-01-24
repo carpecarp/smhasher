@@ -640,6 +640,7 @@ add_library(
   MurmurHash1.cpp
   MurmurHash2.cpp
   MurmurHash3.cpp
+  MurmurHash3_aero.cpp
   Platform.cpp
   Random.cpp
   sha1.cpp

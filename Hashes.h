@@ -7,6 +7,7 @@
 #include "MurmurHash1.h"
 #include "MurmurHash2.h"
 #include "MurmurHash3.h"
+#include "cf_hash_math.h"
 #include "PMurHash.h"
 
 #define XXH_INLINE_ALL
@@ -251,6 +252,7 @@ void FarmHash64_test       ( const void * key, int len, uint32_t seed, void * ou
 void FarmHash64noSeed_test ( const void * key, int len, uint32_t seed, void * out );
 // objsize: 44a0-4543: 163
 void FarmHash128_test      ( const void * key, int len, uint32_t seed, void * out );
+void FarmHash128low_test   ( const void * key, int len, uint32_t seed, void * out );
 // objsize: 0x2c70-0x2f6a farmhash32_su_with_seed
 void farmhash32_c_test     ( const void * key, int len, uint32_t seed, void * out );
 // objsize: 4a20-4a82/5b0-5fd/660-1419: 3688 farmhash64_na_with_seeds

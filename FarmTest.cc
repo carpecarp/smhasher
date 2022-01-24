@@ -27,3 +27,9 @@ void FarmHash128_test ( const void * key, int len, uint32_t seed, void * out ) {
   uint128_t result = Hash128WithSeed((const char *)key, (size_t)len, s);
   memcpy(out, &result, 128/8);
 }
+void FarmHash128low_test ( const void * key, int len, uint32_t seed, void * out ) {
+  using namespace NAMESPACE_FOR_HASH_FUNCTIONS;
+  uint128_t s((uint64_t)seed, (uint64_t)0UL);
+  uint128_t result = Hash128WithSeed((const char *)key, (size_t)len, s);
+  memcpy(out, ((uint8_t*)&result)+8, 64/8);
+}
