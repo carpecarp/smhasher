@@ -621,6 +621,18 @@ inline void wyhash_test (const void * key, int len, uint32_t seed, void * out) {
 inline void wyhash32low (const void * key, int len, uint32_t seed, void * out) {
   *(uint32_t*)out = 0xFFFFFFFF & wyhash(key, (uint64_t)len, (uint64_t)seed, _wyp);
 }
+
+extern "C" uint64_t wyhash_cf(const void *key, size_t len, uint64_t seed, const uint64_t *secret);
+
+// objsize 40dbe0-40ddba: 474
+inline void wyhash_test_cf (const void * key, int len, uint32_t seed, void * out) {
+  *(uint64_t*)out = wyhash_cf(key, (size_t)len, (uint64_t)seed, _wyp);
+}
+// objsize: 40da00-40dbda: 474
+inline void wyhash32low_cf (const void * key, int len, uint32_t seed, void * out) {
+  *(uint32_t*)out = 0xFFFFFFFF & wyhash_cf(key, (size_t)len, (uint64_t)seed, _wyp);
+}
+
 // extra in wyhash_condom.c
 //void wyhash_condom_test (const void * key, int len, uint32_t seed, void * out);
 #endif // HAVE_INT64

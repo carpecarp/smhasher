@@ -279,18 +279,26 @@ STATIC_INLINE uint64_t Rotate64(uint64_t val, int shift) {
 #define is_64bit (x86_64 || (sizeof(void*) == 8))
 #endif
 
+#undef __SSSE3__
+#undef __SSE4_1__
+#undef __SSE4_2__
+#undef __AES__
+#undef __AVX__
+
 #undef can_use_ssse3
 #if defined(__SSSE3__) || defined(FARMHASH_ASSUME_SSSE3)
 
 # ifdef __GNUC__
 #  define GCC_VERSION (__GNUC__ * 100 + __GNUC_MINOR__)
 #  if GCC_VERSION > 403
+#   warning "Using immintrin.h"
 #   include <immintrin.h>
 #   define can_use_ssse3 1
 #  else
 #   define can_use_ssse3 0
 #  endif
 # else
+#  warning "Using immintrin.h"
 #  include <immintrin.h>
 #  define can_use_ssse3 1
 # endif
@@ -304,6 +312,7 @@ STATIC_INLINE uint64_t Rotate64(uint64_t val, int shift) {
 
 #if can_use_ssse3 && (defined(__SSE4_1__) || defined(FARMHASH_ASSUME_SSE41))
 
+#warning "Using immintrin.h"
 #include <immintrin.h>
 #define can_use_sse41 1
 // Now we can use _mm_insert_epi64 and so on.
@@ -337,6 +346,7 @@ STATIC_INLINE uint64_t Rotate64(uint64_t val, int shift) {
 #undef can_use_avx
 #if defined(__AVX__) || defined(FARMHASH_ASSUME_AVX)
 
+#warning "Using immintrin.h"
 #include <immintrin.h>
 #define can_use_avx 1
 

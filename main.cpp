@@ -597,7 +597,6 @@ HashInfo g_hashes[] =
 #endif
 #if __WORDSIZE >= 64
   { MurmurHash3_x64_128, 128, 0x6384BA69, "Murmur3F",    "MurmurHash3 for x64, 128-bit", GOOD, {0x87c37b91114253d5ULL} },
-  { MurmurHash3_x64_128_aero_cf, 128, 0x6384BA69, "Murmur3F_aerospike",    "Aerospike MurmurHash3 for x64, 128-bit", GOOD, {0x87c37b91114253d5ULL} },
 #endif
 #if defined __aarch64__
  #define MUM_VERIF            0x280B2CC6
@@ -647,8 +646,7 @@ HashInfo g_hashes[] =
   { FarmHash32_test,      32, 0/*0x2E226C14*/,   "FarmHash32",  "Google FarmHash32WithSeed", GOOD, {0x2b091701} /* !! */},
   { FarmHash64_test,      64, FARM64_VERIF, "FarmHash64",  "Google FarmHash64WithSeed", GOOD, {} },
  //{ FarmHash64noSeed_test,64, 0xA5B9146C,  "Farm64noSeed","Google FarmHash64 without seed (default, misses on final avalanche)", POOR, {} },
-  { FarmHash128_test,    128, FARM128_VERIF,"FarmHash128", "Google FarmHash128WithSeed Unaccelerated", GOOD, {} },
-  { FarmHash128low_test,    64, FARM128_VERIF,"FarmHash128low", "Google FarmHash128WithSeed low order bytes Unaccelerated", GOOD, {} },  
+  { FarmHash128_test,    128, FARM128_VERIF,"FarmHash128", "Google FarmHash128WithSeed", GOOD, {} },
 #if defined(__SSE4_2__) && defined(__x86_64__)
   { farmhash32_c_test,    32, 0/*0xA2E45238*/,   "farmhash32_c", "farmhash32_with_seed (C99)", GOOD,
     {0x2b091701} /* !! */},
@@ -728,12 +726,18 @@ HashInfo g_hashes[] =
 #else
   { wyhash32low,          32, 0x7DB3559D, "wyhash32low",    "wyhash v3 lower 32bit", GOOD,
     { 0x429dacdd, 0xd637dbf3 } /* !! */ },
+  { wyhash32low_cf,        32, 0x7DB3559D, "wyhash32low_cf",    "wyhash v3 lower 32bit", GOOD,
+    { 0x429dacdd, 0xd637dbf3 } /* !! */ },
 #endif
 #ifdef HAVE_INT64
   { wyhash_test,          64, 0x67031D43, "wyhash",         "wyhash v3 (64-bit)", GOOD,
     // all seeds with those lower bits
     { 0x14cc886e, 0x1bf4ed84, 0x14cc886e14cc886eULL} /* !! 2^33 bad seeds, but easy to check */ },
   //{ wyhash_condom_test, 64, 0x7C62138D, "wyhash_condom",  "wyhash v3 condom 2 (64-bit)", GOOD, { } },
+  { wyhash_test_cf,       64, 0x67031D43, "wyhash_cf",         "wyhash v3 (64-bit)", GOOD,
+    // all seeds with those lower bits
+    { 0x14cc886e, 0x1bf4ed84, 0x14cc886e14cc886eULL} /* !! 2^33 bad seeds, but easy to check */ },
+
 #endif
   { nmhash32_test,        32, 0x12A30553, "nmhash32",       "nmhash32", GOOD, {}},
   { nmhash32x_test,       32, 0xA8580227, "nmhash32x",      "nmhash32x", GOOD, {}},

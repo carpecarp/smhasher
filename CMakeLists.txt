@@ -641,6 +641,7 @@ add_library(
   MurmurHash2.cpp
   MurmurHash3.cpp
   MurmurHash3_aero.cpp
+  cf_wyhash.c
   Platform.cpp
   Random.cpp
   sha1.cpp
