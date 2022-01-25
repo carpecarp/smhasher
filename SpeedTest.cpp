@@ -184,7 +184,7 @@ NEVER_INLINE int64_t timehash ( pfHash hash, const void * key, int len, int seed
 
 NEVER_INLINE int64_t timehash_small ( pfHash hash, const void * key, int len, int seed )
 {
-  const int NUM_TRIALS = 200;
+  const int NUM_TRIALS = 100;
   volatile unsigned long long int begin, end;
   uint32_t hash_temp[16] = {0};
   uint32_t *buf;
@@ -242,7 +242,7 @@ double SpeedTest ( pfHash hash, uint32_t seed, const int trials, const int block
 
     double t;
 
-    if(blocksize < 100)
+    if(blocksize < 1000)
     {
       t = (double)timehash_small(hash,block,blocksize,itrial);
     }

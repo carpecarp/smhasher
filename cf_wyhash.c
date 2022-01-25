@@ -52,8 +52,7 @@ void wyhash_condom_test_cf (const void * key, int len, uint32_t seed, void * out
    uint64_t hash = wyhash(s.c_str(), s.size(), 0, _wyp);
 */
 
-#ifndef wyhash_final_version_3
-#define wyhash_final_version_3
+// this is based on wyhash_final_version_3 (for git tracking)
 
 #ifndef WYHASH_32BIT_MUM
 //0: normal version, slow on 32 bit systems
@@ -91,7 +90,7 @@ static inline void _wymum(uint64_t *A, uint64_t *B)
 #endif
 #elif defined(__SIZEOF_INT128__)
 // !WYHASH_32BIT_MUM
-	__uint128_t r = *A; r* = *B; 
+	__uint128_t r = *A; r *= *B;
 #if(WYHASH_CONDOM>1)
 	*A ^= (uint64_t)r; *B ^= (uint64_t)(r>>64);
 #else

@@ -84,6 +84,8 @@ bool MomentChi2Test ( struct HashInfo *info, int inputSize );
 
 const char* quality_str[3] = { "SKIP", "POOR", "GOOD" };
 
+void murmurHash3_x64_128_aero_cf(const uint8_t* key, const size_t len, uint8_t* out);
+
 // sorted by quality and speed. the last is the list of internal secrets to be tested against bad seeds.
 // marked with !! are known bad seeds, which either hash to 0 or create collisions.
 HashInfo g_hashes[] =
@@ -597,6 +599,7 @@ HashInfo g_hashes[] =
 #endif
 #if __WORDSIZE >= 64
   { MurmurHash3_x64_128, 128, 0x6384BA69, "Murmur3F",    "MurmurHash3 for x64, 128-bit", GOOD, {0x87c37b91114253d5ULL} },
+  { MurmurHash3_x64_128_aero_cf, 128, 0x6384BA69, "Murmur3F Aero/CF",    "MurmurHash3 for x64, 128-bit", GOOD, {0x87c37b91114253d5ULL} },
 #endif
 #if defined __aarch64__
  #define MUM_VERIF            0x280B2CC6
@@ -1013,12 +1016,12 @@ void test ( hashfunc<hashtype> hash, HashInfo* info )
     printf("\n");
     fflush(NULL);
 
-    for(int i = 1; i < 32; i++)
+    for(int i = 1; i < 32 + 288; i++)
     {
       volatile int j = i;
       sum += TinySpeedTest(hashfunc<hashtype>(info->hash),sizeof(hashtype),j,info->verification,true);
     }
-    g_speed = sum = sum / 31.0;
+    g_speed = sum = sum / (288 + 31.0) ;
     printf("Average                                    %6.3f cycles/hash\n",sum);
     printf("\n");
     fflush(NULL);
