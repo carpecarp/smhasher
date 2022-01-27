@@ -584,6 +584,8 @@ set_source_files_properties(
     ${ASCON_SRC}
     PROPERTIES COMPILE_FLAGS "-Iasconhashv12 -DASCON_INLINE_MODE")
 
+set_source_files_properties(cf_wyhash_final.c PROPERTIES COMPILE_FLAGS "-I${CMAKE_SOURCE_DIR} -I${CMAKE_SOURCE_DIR}/citrusleaf")
+
 if(NOT (CMAKE_BUILD_TYPE STREQUAL "Debug"))
   # PMP breaks Debug build
   if(NOT (CMAKE_BUILD_TYPE STREQUAL "asan"))
@@ -641,7 +643,7 @@ add_library(
   MurmurHash2.cpp
   MurmurHash3.cpp
   MurmurHash3_aero.cpp
-  cf_wyhash.c
+  cf_wyhash_final.c
   Platform.cpp
   Random.cpp
   sha1.cpp

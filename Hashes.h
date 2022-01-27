@@ -622,15 +622,40 @@ inline void wyhash32low (const void * key, int len, uint32_t seed, void * out) {
   *(uint32_t*)out = 0xFFFFFFFF & wyhash(key, (uint64_t)len, (uint64_t)seed, _wyp);
 }
 
-extern "C" uint64_t wyhash_cf(const void *key, size_t len, uint64_t seed, const uint64_t *secret);
+extern "C" uint64_t _cf_wyhash(const void *key, int len, uint64_t seed, const void *secret);
 
-// objsize 40dbe0-40ddba: 474
-inline void wyhash_test_cf (const void * key, int len, uint32_t seed, void * out) {
-  *(uint64_t*)out = wyhash_cf(key, (size_t)len, (uint64_t)seed, _wyp);
+inline void
+_smh_test_cf_wyhash(const void * key, int len, uint32_t seed, void * out)
+{
+	static const uint64_t _wyp[4] = {0xa0761d6478bd642full, 0xe7037ed1a0b428dbull, 0x8ebc6af09c88c6e3ull, 0x589965cc75374cc3ull};
+	*(uint64_t*)out = _cf_wyhash(key, (uint64_t)len, (uint64_t)seed, _wyp);
 }
-// objsize: 40da00-40dbda: 474
-inline void wyhash32low_cf (const void * key, int len, uint32_t seed, void * out) {
-  *(uint32_t*)out = 0xFFFFFFFF & wyhash_cf(key, (size_t)len, (uint64_t)seed, _wyp);
+
+inline void
+_smh_test_cf_wyhash32low (const void * key, int len, uint32_t seed, void * out) {
+	static const uint64_t _wyp[4] = {0xa0761d6478bd642full, 0xe7037ed1a0b428dbull, 0x8ebc6af09c88c6e3ull, 0x589965cc75374cc3ull};
+	uint64_t use_seed = 0x29FBB14cc886full;
+	if (seed != 0) {
+		use_seed = seed;
+	}
+	*(uint32_t*)out = 0xFFFFFFFF & _cf_wyhash(key, (size_t)len, use_seed, _wyp);
+}
+
+inline void
+_smh_test_cf_wyhash_fs(const void * key, int len, uint32_t seed, void * out)
+{
+	static const uint64_t _wyp[4] = {0xa0761d6478bd642full, 0xe7037ed1a0b428dbull, 0x8ebc6af09c88c6e3ull, 0x589965cc75374cc3ull};
+	uint64_t use_seed = 0x29FBB14cc886full;
+	if (seed != 0) {
+		use_seed = seed;
+	}
+	*(uint64_t*)out = _cf_wyhash(key, (uint64_t)len, use_seed, _wyp);
+}
+
+inline void
+_smh_test_cf_wyhash32low_fs (const void * key, int len, uint32_t seed, void * out) {
+	static const uint64_t _wyp[4] = {0xa0761d6478bd642full, 0xe7037ed1a0b428dbull, 0x8ebc6af09c88c6e3ull, 0x589965cc75374cc3ull};
+	*(uint32_t*)out = 0xFFFFFFFF & _cf_wyhash(key, (size_t)len, 0x29FBB14cc886full, _wyp);
 }
 
 // extra in wyhash_condom.c
