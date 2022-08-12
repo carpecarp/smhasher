@@ -739,21 +739,13 @@ HashInfo g_hashes[] =
   { wyhash_test,          64, 0x67031D43, "wyhash",         "wyhash v3 (64-bit)", GOOD,
     // all seeds with those lower bits
     { 0x14cc886e, 0x1bf4ed84, 0x14cc886e14cc886eULL} /* !! 2^33 bad seeds, but easy to check */ },
-<<<<<<< HEAD
-  //{ wyhash_condom_test, 64, 0x7C62138D, "wyhash_condom",  "wyhash v3 condom 2 (64-bit)", GOOD, { } },
-  { wyhash_test_cf,       64, 0x67031D43, "wyhash_cf",         "wyhash v3 (64-bit)", GOOD,
-    // all seeds with those lower bits
-    { 0x14cc886e, 0x1bf4ed84, 0x14cc886e14cc886eULL} /* !! 2^33 bad seeds, but easy to check */ },
-
-=======
+  //{ wyhash_condom_test,   64, 0x7C62138D, "wyhash_condom",  "wyhash v3 condom 2 (64-bit)", GOOD, { } },
   { _smh_test_cf_wyhash,       64, 0x67031D43, "wyhash_cf",         "wyhash v3 (64-bit)", GOOD,
     // all seeds with those lower bits
     { 0x14cc886e, 0x1bf4ed84, 0x14cc886e14cc886eULL} /* !! 2^33 bad seeds, but easy to check */ },
   { _smh_test_cf_wyhash_fs,       64, 0x083AE080, "wyhash_cf_fs",         "wyhash v3 forced cf seed (64-bit)", GOOD,
     // all seeds with those lower bits
     { } },
-  //{ wyhash_condom_test,   64, 0x7C62138D, "wyhash_condom",  "wyhash v3 condom 2 (64-bit)", GOOD, { } },
->>>>>>> wyhash final work rendering suitable for aerospike
 #endif
   { nmhash32_test,        32, 0x12A30553, "nmhash32",       "nmhash32", GOOD, {}},
   { nmhash32x_test,       32, 0xA8580227, "nmhash32x",      "nmhash32x", GOOD, {}},
