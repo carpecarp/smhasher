@@ -309,9 +309,11 @@ double SpeedTest ( pfHash hash, uint32_t seed, const int trials, const int block
   
   size_t n = times.size();
   size_t n_bu = ShowBuckets(times);
-  size_t n_fo = FilterOutliers(times);
+  // size_t n_fo = FilterOutliers(times);
+  size_t n_fo = n_bu;
 
-  times.resize(n_fo);
+  // times.resize(n_fo);
+  times.resize(n_bu);  
 
   int diff = (int)((int64_t)n_bu - n_fo);
   
@@ -466,10 +468,13 @@ double HashMapSpeedTest ( pfHash pfhash, const int hashbits,
 
   size_t n = times.size();
   size_t n_bu = ShowBuckets(times);
-  size_t n_fo = FilterOutliers(times);
+  // size_t n_fo = FilterOutliers(times);
+  size_t n_fo = n_bu;
+
   int diff = (int)((int64_t)n_bu - n_fo);
   
-  times.resize(n_fo);
+  // times.resize(n_fo);
+  times.resize(n_bu);  
 
 #if 0
   printf("bu vs fo: %lu -> %lu (%lu, %6.2f) vs %lu -> %lu (%lu, %6.2f) %s diff (%d %6.2f%%)\n",
@@ -542,9 +547,11 @@ double HashMapSpeedTest ( pfHash pfhash, const int hashbits,
 
   n = times.size();
   n_bu = ShowBuckets(times);
-  n_fo = FilterOutliers(times);
+  // n_fo = FilterOutliers(times);
+  n_fo = n_bu;
 
-  times.resize(n_fo);
+  // times.resize(n_fo);
+  times.resize(n_bu);
   
   diff = (int)((int64_t)n_bu - n_fo);
   
