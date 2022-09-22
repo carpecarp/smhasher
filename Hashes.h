@@ -456,6 +456,7 @@ inline void mum_low_test ( const void * key, int len, uint32_t seed, void * out 
 
 //-----------------------------------------------------------------------------
 
+#ifdef NEVER_DEFINE_THIS
 #define T1HA0_RUNTIME_SELECT 0
 #ifdef HAVE_AESNI
 # define T1HA0_AESNI_AVAILABLE 1
@@ -541,6 +542,10 @@ inline void t1ha0_ia32aes_avx2_test(const void * key, int len, uint32_t seed, vo
 }
 #endif /* __AVX2__ */
 #endif /* T1HA0_AESNI_AVAILABLE */
+
+#endif // NEVER_DEFINE_THIS
+
+//-----------------------------------------------------------------------------
 
 #if defined(HAVE_SSE42) && defined(__x86_64__)
 #include "clhash.h"

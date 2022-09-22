@@ -9,6 +9,9 @@
 #include <algorithm> // for sort, min
 #include <string>
 
+#include <sys/time.h>
+#include <time.h>
+
 #include <unordered_map>
 #include <parallel_hashmap/phmap.h>
 #include <functional>
@@ -79,7 +82,7 @@ double CalcStdv ( std::vector<double> & v )
 // Return true if the largest value in v[0,len) is more than three
 // standard deviations from the mean
 
-bool ContainsOutlier ( std::vector<double> & v, size_t len )
+bool ContainsOutlier ( const std::vector<double> & v, size_t len )
 {
   double mean = 0;
   
@@ -105,13 +108,55 @@ bool ContainsOutlier ( std::vector<double> & v, size_t len )
   return v[len-1] > cutoff;  
 }
 
+size_t ShowBuckets(std::vector<double> &v)
+{
+	size_t len = v.size();
+
+	size_t buckets = 32;
+
+	if (len < buckets) {
+		return (size_t)len;
+	}
+	
+	double epsilon = 1.0/(double)(2 * buckets);
+	double b_width = ((double)(v[len - 1] - v[0]))/(double)buckets;
+	std::vector<int>count(buckets, 0);
+
+	int i = 0;
+	double b_edge = (double)v[0] + b_width;
+	int b_index = 0;
+	
+	for(; i < len; i++) {
+		while (v[i] >= b_edge + epsilon) {
+			b_edge += b_width;
+			b_index++;
+		}
+		count[b_index]++;
+	}
+
+#if 0
+	b_edge = b_width + v[0];
+	for(i=0; i < count.size(); i++)
+	{
+		printf("%3d: [%6.2f, %6.2f) %d\n", i, b_edge - b_width, b_edge, count[i]);
+		b_edge += b_width;
+	}
+#endif
+
+	// stop including buckets when more than 90% are included
+	int at_least = (9 * len) / 10;
+	size_t total = 0;
+	for(i = 0; i < count.size() && total < at_least; i++) {
+		total += count[i];
+	}
+	return total;
+}
+
 // Do a binary search to find the largest subset of v that does not contain
 // outliers.
 
-void FilterOutliers ( std::vector<double> & v )
+size_t FilterOutliers (const std::vector<double> & v )
 {
-  std::sort(v.begin(),v.end());
-  
   size_t len = 0;
   
   for(size_t x = 0x40000000; x; x = x >> 1 )
@@ -122,9 +167,13 @@ void FilterOutliers ( std::vector<double> & v )
     {
       len |= x;
     }
+	else {
+		// printf("FO: outliers at %lu (%lu)\n", x, v.size());
+		// this should probably be a break
+	}
   }
-  
-  v.resize(len);
+  // printf("FO: %lu -> %lu\n", v.size(), len);
+  return len;
 }
 
 // Iteratively tighten the set to find a subset that does not contain
@@ -258,7 +307,21 @@ double SpeedTest ( pfHash hash, uint32_t seed, const int trials, const int block
   
   std::sort(times.begin(),times.end());
   
-  FilterOutliers(times);
+  size_t n = times.size();
+  size_t n_bu = ShowBuckets(times);
+  size_t n_fo = FilterOutliers(times);
+
+  times.resize(n_fo);
+
+  int diff = (int)((int64_t)n_bu - n_fo);
+  
+#if 0
+  printf("bu vs fo: %lu -> %lu (%lu, %6.2f) vs %lu -> %lu (%lu, %6.2f) %s diff (%d %6.2f%%)\n",
+		 n, n_bu, n - n_bu, (double)n_bu / (double)n,
+		 n, n_fo, n - n_fo, (double)n_bu / (double)n,
+		 (n_bu > n_fo) ? "buckets" : ((n_bu == n_fo) ? "same" : "filter"),
+		 diff, (double)(100*diff)/(double)n_bu);
+#endif
   
   delete [] buf;
   
@@ -276,6 +339,22 @@ void BulkSpeedTest ( pfHash hash, uint32_t seed )
   printf("Bulk speed test - %d-byte keys\n",blocksize);
   double sumbpc = 0.0;
 
+  uint64_t ti_start = timer_start();
+  
+  int duration = 5;
+  struct timespec ts;
+
+  ts.tv_sec = duration;
+  ts.tv_nsec = 0;
+    
+  int rv = nanosleep(&ts, NULL);
+  
+  uint64_t ti_end = timer_end();
+
+  printf("%lu ticks in %d seconds\n", ti_end - ti_start, duration);
+  printf("%lu ticks per second\n", (ti_end - ti_start)/duration);
+  printf("%6.3f Mhz\n", ((double)(ti_end - ti_start))/(duration * 1000.0 * 1000.0));
+  
   volatile double warmup_cycles = SpeedTest(hash,seed,trials,blocksize,0);
 
   for(int align = 7; align >= 0; align--)
@@ -384,7 +463,22 @@ double HashMapSpeedTest ( pfHash pfhash, const int hashbits,
   hashmap.clear();
 
   std::sort(times.begin(),times.end());
-  FilterOutliers(times);
+
+  size_t n = times.size();
+  size_t n_bu = ShowBuckets(times);
+  size_t n_fo = FilterOutliers(times);
+  int diff = (int)((int64_t)n_bu - n_fo);
+  
+  times.resize(n_fo);
+
+#if 0
+  printf("bu vs fo: %lu -> %lu (%lu, %6.2f) vs %lu -> %lu (%lu, %6.2f) %s diff (%d %6.2f%%)\n",
+		 n, n_bu, n - n_bu, (double)n_bu / (double)n,
+		 n, n_fo, n - n_fo, (double)n_bu / (double)n,
+		 (n_bu > n_fo) ? "buckets" : ((n_bu == n_fo) ? "same" : "filter"),
+		 diff, (double)(100*diff)/(double)n_bu);
+#endif
+
   double mean = CalcMean(times);
   double stdv = CalcStdv(times);
   printf("%0.3f cycles/op", mean);
@@ -445,7 +539,23 @@ double HashMapSpeedTest ( pfHash pfhash, const int hashbits,
   fflush(NULL);
 
   std::sort(times.begin(),times.end());
-  FilterOutliers(times);
+
+  n = times.size();
+  n_bu = ShowBuckets(times);
+  n_fo = FilterOutliers(times);
+
+  times.resize(n_fo);
+  
+  diff = (int)((int64_t)n_bu - n_fo);
+  
+#if 0
+  printf("bu vs fo: %lu -> %lu (%lu, %6.2f) vs %lu -> %lu (%lu, %6.2f) %s diff (%d %6.2f%%)\n",
+		 n, n_bu, n - n_bu, (double)n_bu / (double)n,
+		 n, n_fo, n - n_fo, (double)n_bu / (double)n,
+		 (n_bu > n_fo) ? "buckets" : ((n_bu == n_fo) ? "same" : "filter"),
+		 diff, (double)(100*diff)/(double)n_bu);
+#endif
+
   double mean1 = CalcMean(times);
   double stdv1 = CalcStdv(times);
   printf("%0.3f cycles/op", mean1);

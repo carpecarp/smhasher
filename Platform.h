@@ -158,7 +158,11 @@ __inline__ uint64_t rdtsc()
   //asm volatile("mrs cntv_ctl_el0,  %0" : "=r" (pmuseren));
   if (pmuseren & 1) {  // Allows reading perfmon counters for user mode code.
     asm volatile("mrs %0, cntvct_el0" : "=r" (pmccntr));
+#if __ARM_ARCH >= 8
+      return static_cast<int64_t>(pmccntr);
+#else
     return (uint64_t)(pmccntr) * 64;  // Should optimize to << 6
+#endif
   }
   return timeofday();
 #else
